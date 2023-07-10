@@ -57,21 +57,24 @@ function promptMenu() {
 function viewDepartments() {
     connection.query('SELECT * FROM department', (err, res) => {
         if (err) throw err;
-        console.log(res);
+        console.table(res);
+        promptMenu();
     })
 };
 
 function viewRoles() {
     connection.query('SELECT * FROM role', (err, res) => {
         if (err) throw err;
-        console.log(res);
+        console.table(res);
+        promptMenu();
     })
 };
 
 function viewEmployees() {
     connection.query('SELECT * FROM employee', (err, res) => {
         if (err) throw err;
-        console.log(res);
+        console.table(res);
+        promptMenu();
     })
 };
 //FUNCTION TO ADD NEW TABLE INFO//
@@ -83,7 +86,8 @@ function promptAddDepartment() {
         .then((answers) => {
             connection.query('INSERT INTO department SET ?', { name: answers.departmentName }, (err) => {
                 if (err) throw err;
-                console.log(`Department '${answers.departmentName}' added successfully`)
+                console.log(`Department '${answers.departmentName}' added successfully`);
+                promptMenu();
             })
         })
 };
@@ -110,7 +114,8 @@ function promptAddRole() {
             },
                 (err) => {
                     if (err) throw err;
-                    console.log(`Role '${answers.roleName}' added successfully`)
+                    console.log(`Role '${answers.roleName}' added successfully`);
+                    promptMenu();
                 })
         })
 };
@@ -143,7 +148,8 @@ function promptAddEmployee() {
             }),
                 (err) => {
                     if (err) throw err;
-                    console.log(`Employee '${answers.firstName}${answers.lastName}' added successfully`)
+                    console.log(`Employee '${answers.firstName}${answers.lastName}' added successfully`);
+                    promptMenu();
                 }
         })
 };
@@ -162,9 +168,8 @@ function promptUpdateEmployeeRole() {
         .then((answers) => {
             connection.query('UPDATE employee SET role_id = ? WHERE = ?', [answers.roleId, answers.employeeid], (err) => {
                 if (err) throw err;
-                console.log(`Employee role updated successfully`)
+                console.log(`Employee role updated successfully`);
+                promptMenu();
             })
         })
 };
-
-
