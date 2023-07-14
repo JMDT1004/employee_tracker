@@ -87,8 +87,8 @@ function promptAddDepartment() {
             connection.query('INSERT INTO department SET ?', { name: answers.departmentName }, (err) => {
                 if (err) throw err;
                 console.log(`Department '${answers.departmentName}' added successfully`);
-                promptMenu();
             })
+            promptMenu();
         })
 };
 
@@ -115,8 +115,8 @@ function promptAddRole() {
                 (err) => {
                     if (err) throw err;
                     console.log(`Role '${answers.roleName}' added successfully`);
-                    promptMenu();
                 })
+                promptMenu();
         })
 };
 
@@ -149,27 +149,42 @@ function promptAddEmployee() {
                 (err) => {
                     if (err) throw err;
                     console.log(`Employee '${answers.firstName}${answers.lastName}' added successfully`);
-                    promptMenu();
                 }
+                promptMenu();
         })
 };
 //FUNCTION TO UPDATE EMPLOYEE ROLE//
 function promptUpdateEmployeeRole() {
-    inquirer.prompt([
-        {
-            name: 'employeeId',
-            message: 'Enter ID of Employee to Update'
-        },
-        {
-            name: 'roleId',
-            message: 'Enter the new role ID of Employee'
+    connection.query('SELECT * FROM employee', function (err, results) {
+        if (err) {
+            console.error('Error fetching employees:', err);
+            return;
         }
-    ])
-        .then((answers) => {
-            connection.query('UPDATE employee SET role_id = ? WHERE = ?', [answers.roleId, answers.employeeid], (err) => {
-                if (err) throw err;
-                console.log(`Employee role updated successfully`);
-                promptMenu();
+        const employeeName = results.map((employee) => ({
+            name: `${employee.first_name} ${employee.last_name}`,
+            value: employee.id
+        }));
+        // Prompt user to select employee of the legion
+        inquirer
+            .prompt([
+                {
+                    type: 'list',
+                    name: 'employeeId',
+                    message: 'Select the employee to update:',
+                    choices: employeeName
+                },
+                {
+                    type: 'input',
+                    name: 'roleId',
+                    message: 'Enter the new role ID for the employee:'
+                }
+            ])
+            .then((answers) => {
+                connection.query('UPDATE employee SET role_id = ? WHERE id = ?', [answers.roleId, answers.employeeId], (err) => {
+                    if (err) throw err;
+                    console.log(`Employee role updated successfully`);
+                    promptMenu();
+                })
             })
-        })
+    })
 };
